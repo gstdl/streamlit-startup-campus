@@ -54,19 +54,7 @@ def line_plot(df, y_axis, label, highlighted):
             "pop": "sum",
             "gdpPercap": "mean",
         }).reset_index()
-    data = df[df[label]==highlighted]
-    x = data["year"]
-    y = data[y_axis]
-    fig.add_trace(go.Scatter(x=x, y=y, 
-        hovertext=[
-            f"{label}: {highlighted}<br>year: {year}<br>{y_axis}: {value}"
-            for year, value in zip(x,y)
-        ],
-        hoverinfo="text",
-        mode='lines',
-        line = dict(color='orange', width=10),
-        # name=highlighted
-    ))
+    
     for i in df[label].unique():
         if i == highlighted:
             continue
@@ -83,6 +71,21 @@ def line_plot(df, y_axis, label, highlighted):
             line = dict(color='gray', width=1),
             # name=i
         ))
+    
+    data = df[df[label]==highlighted]
+    x = data["year"]
+    y = data[y_axis]
+    fig.add_trace(go.Scatter(x=x, y=y, 
+        hovertext=[
+            f"{label}: {highlighted}<br>year: {year}<br>{y_axis}: {value}"
+            for year, value in zip(x,y)
+        ],
+        hoverinfo="text",
+        mode='lines',
+        line = dict(color='orange', width=10),
+        # name=highlighted
+    ))
+    
     fig.update_layout(showlegend=False)
     return fig
 
