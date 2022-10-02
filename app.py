@@ -111,11 +111,11 @@ st.plotly_chart(box_plot(df, x, y))
 
 st.markdown('## Gapminder Lineplot')
 col1, col2, col3 = st.columns(3)
-with col1:
-    label = st.selectbox("Select label", ["country", "continent"], key="lineplot_label")
-with col2:
-    highlighted = st.selectbox("Select value to hightlight", df[label].unique(), key="lineplot_highlighting")
 with col3:
+    label = st.radio("Select label", ["country", "continent"], key="lineplot_label")
+with col1:
+    highlighted = st.selectbox("Select value to hightlight", df[label].unique(), key="lineplot_highlighting")
+with col2:
     y = st.selectbox("Select hue", metrics, key="lineplot_y")
 st.plotly_chart(line_plot(df, y, label, highlighted))
 
@@ -127,5 +127,5 @@ with col1:
 with col2:
     y = st.selectbox("Select y Axis", metrics, key="scatterplot_y")
 with col3:
-    hue = st.selectbox("Select hue", ["country", "continent"], key="scatterplot_hue")
+    hue = st.radio("Select hue", ["country", "continent"], key="scatterplot_hue")
 st.plotly_chart(scatter_plot(df, x, y, hue))
