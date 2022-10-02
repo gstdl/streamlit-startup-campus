@@ -104,7 +104,7 @@ st.dataframe(get_filtered_data(selected_continents, selected_countries, min_year
 st.markdown("## Gapminder Boxplot")
 col1, col2 = st.columns(2)
 with col1:
-    x = st.selectbox("Select x Axis", dimension, "continent", key="boxplot_x")
+    x = st.selectbox("Select x Axis", dimension, 1, key="boxplot_x")
 with col2:
     y = st.selectbox("Select y Axis", metrics, key="boxplot_y")
 st.plotly_chart(box_plot(df, x, y))
