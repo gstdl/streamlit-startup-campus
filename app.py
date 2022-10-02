@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 from gapminder import gapminder
 
 #######
@@ -45,6 +46,46 @@ def scatter_plot(df, x, y, hue):
     return fig
 
 
+def line_plot(df, y_axis, label, highlighted):
+    fig = go.Figure()
+    if label=="continent":
+        df = df.groupby(["continent", "year"]).agg({
+            "lifeExp": "mean", 
+            "pop": "sum",
+            "gdpPercap": "mean",
+        }).reset_index()
+    data = df[df[label]==highlighted]
+    x = data["year"]
+    y = data[y_axis]
+    fig.add_trace(go.Scatter(x=x, y=y, 
+        hovertext=[
+            f"{label}: {highlighted}<br>year: {year}<br>{y_axis}: {value}"
+            for year, value in zip(x,y)
+        ],
+        hoverinfo="text",
+        mode='lines',
+        line = dict(color='orange', width=10),
+        # name=highlighted
+    ))
+    for i in df[label].unique():
+        if i == highlighted:
+            continue
+        data = df[df[label]==i]
+        x = data["year"]
+        y = data[y_axis]
+        fig.add_trace(go.Scatter(x=x, y=y, 
+            hovertext=[
+                f"{label}: {i}<br>year: {year}<br>{y_axis}: {value}"
+                for year, value in zip(x,y)
+            ],
+            hoverinfo="text",
+            mode='lines',
+            line = dict(color='gray', width=1),
+            # name=i
+        ))
+    fig.update_layout(showlegend=False)
+    return fig
+
 #######
 # Streamlit app code
 #######
@@ -65,8 +106,15 @@ with col2:
     y = st.selectbox("Select y Axis", metrics, key="boxplot_y")
 st.plotly_chart(box_plot(df, x, y))
 
-## TODO add lineplot
-# st.markdown('## Gapminder Lineplot')
+st.markdown('## Gapminder Lineplot')
+col1, col2, col3 = st.columns(3)
+with col1:
+    label = st.selectbox("Select label", ["country", "continent"], key="lineplot_label")
+with col2:
+    highlighted = st.selectbox("Select value to hightlight", df[label].unique(), key="lineplot_highlighting")
+with col3:
+    y = st.selectbox("Select hue", metrics, key="lineplot_y")
+st.plotly_chart(line_plot(df, y, label, highlighted))
 
 
 st.markdown('## Gapminder Scatterplot')
